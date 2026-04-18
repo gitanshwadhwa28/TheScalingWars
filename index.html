@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Race — Game Companion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles/rules.css">
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">Scaling <em>Wars</em> <span>v0.1</span></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="show('overview')">Overview</button>
+    <button class="nav-tab" onclick="show('board')">Board</button>
+    <button class="nav-tab" onclick="show('resources')">Resources</button>
+    <button class="nav-tab" onclick="show('building')">Building</button>
+    <button class="nav-tab" onclick="show('turns')">Turn Flow</button>
+    <button class="nav-tab" onclick="show('cards')">Cards</button>
+    <button class="nav-tab" onclick="show('archetypes')">Archetypes</button>
+    <button class="nav-tab" onclick="show('scoring')">Scoring</button>
+    <button class="nav-tab" onclick="show('dice')">Dice Roller</button>
+  </div>
+</nav>
+
+<main>
+
+<!-- OVERVIEW -->
+<div class="section active" id="s-overview">
+  <div class="hero">
+    <div class="hero-eyebrow">Interactive Game Companion</div>
+    <h1>The <em>Scaling</em><br>Wars</h1>
+    <p class="hero-desc">A competitive strategy board game where tech giants battle for dominance over the AI economy. Expand your network, gather resources, and outmaneuver rivals.</p>
+    <div class="play-cta-wrap">
+      <div class="play-arrows" aria-hidden="true">
+        <span class="play-arrow" data-dir="right">➤</span>
+        <span class="play-arrow" data-dir="left">➤</span>
+        <span class="play-arrow" data-dir="down">➤</span>
+      <span class="play-arrow" data-dir="up">➤</span>
+      <span class="play-arrow" data-dir="down-right">➤</span>
+      <span class="play-arrow" data-dir="up-right">➤</span>
+      <span class="play-arrow" data-dir="down-left">➤</span>
+      <span class="play-arrow" data-dir="up-left">➤</span>
+      </div>
+      <a class="play-button" href="run.html">Play</a>
+    </div>
+  </div>
+
+  <div class="sec-head"><h2>Design goal</h2><span class="tag">Philosophy</span></div>
+  <div class="card" style="margin-bottom:12px;">
+    <p style="color:var(--text2);line-height:1.8;font-size:13px;">You cannot dominate everything. You have to choose where to invest, where to expand, and when to disrupt a rival. That tension is the heart of the AI race.</p>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="sec-head"><h2>Strategic styles</h2><span class="tag">Playstyles</span></div>
+  <div class="grid2">
+    <div class="card">
+      <div class="build-name">Foundation model</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:6px;">Prioritize Talent + Compute + Capital. Race for Research Leadership. Contest every benchmark. Expensive but prestigious.</div>
+    </div>
+    <div class="card">
+      <div class="build-name">Applied AI</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:6px;">Prioritize expansion and flexible trading. Spread your network wide. Convert resources efficiently. Speed over depth.</div>
+    </div>
+    <div class="card">
+      <div class="build-name">Cloud / Infrastructure</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:6px;">Dominate Network Links and key production spots. Longest Network is your win condition. Lock others out of key intersections.</div>
+    </div>
+    <div class="card">
+      <div class="build-name">Disruption</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:6px;">Use Strategy Cards aggressively. Steal resources. Block rivals' production. Win through chaos and pressure, not expansion.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="sec-head"><h2>Components</h2><span class="tag">What's in the box</span></div>
+  <div class="grid3">
+    <div class="card-sm"><div style="color:var(--text);font-weight:500;margin-bottom:3px;">19 hex tiles</div><div style="color:var(--text3);font-size:11px;">5 terrain types + Regulatory Zone</div></div>
+    <div class="card-sm"><div style="color:var(--text);font-weight:500;margin-bottom:3px;">Strategy card deck</div><div style="color:var(--text3);font-size:11px;">25 cards, 6 types</div></div>
+    <div class="card-sm"><div style="color:var(--text);font-weight:500;margin-bottom:3px;">Resource cards</div><div style="color:var(--text3);font-size:11px;">~20 of each resource type</div></div>
+    <div class="card-sm"><div style="color:var(--text);font-weight:500;margin-bottom:3px;">Player pieces</div><div style="color:var(--text3);font-size:11px;">5 Hubs + 4 Campuses + 15 Links each</div></div>
+    <div class="card-sm"><div style="color:var(--text);font-weight:500;margin-bottom:3px;">Special cards</div><div style="color:var(--text3);font-size:11px;">Longest Network + Research Leadership</div></div>
+    <div class="card-sm"><div style="color:var(--text);font-weight:500;margin-bottom:3px;">Disruption marker</div><div style="color:var(--text3);font-size:11px;">1 token, starts on Regulatory Zone</div></div>
+  </div>
+</div>
+
+<!-- BOARD -->
+<div class="section" id="s-board">
+  <div class="sec-head"><h2>Hex board</h2><span class="tag">19 tiles · 3-4-5-4-3 layout</span></div>
+  <p style="color:var(--text2);margin-bottom:20px;font-size:12px;">Click any hex to see what it produces. The board is shuffled each game — this shows one possible arrangement.</p>
+
+  <canvas id="hexCanvas" width="640" height="420"></canvas>
+  <p class="hint">Click a hex to inspect it</p>
+
+  <div class="hex-info" id="hexInfo">
+    <div class="hex-info-name" style="color:var(--text2);">Select a hex</div>
+    <div class="hex-info-desc">Click any tile on the board above to see its resource type, production rules, and strategic value.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="sec-head"><h2>Hex types</h2><span class="tag">Tile counts</span></div>
+  <div class="grid5">
+    <div class="card-sm" style="border-top:3px solid var(--compute);">
+      <div style="font-family:var(--display);font-size:22px;font-weight:800;color:var(--compute);">4</div>
+      <div style="color:var(--text);font-size:12px;font-weight:500;margin-top:2px;">Compute clusters</div>
+      <div style="color:var(--text3);font-size:10px;margin-top:2px;">→ Compute</div>
+    </div>
+    <div class="card-sm" style="border-top:3px solid var(--data);">
+      <div style="font-family:var(--display);font-size:22px;font-weight:800;color:var(--data);">4</div>
+      <div style="color:var(--text);font-size:12px;font-weight:500;margin-top:2px;">Data lakes</div>
+      <div style="color:var(--text3);font-size:10px;margin-top:2px;">→ Data</div>
+    </div>
+    <div class="card-sm" style="border-top:3px solid var(--talent);">
+      <div style="font-family:var(--display);font-size:22px;font-weight:800;color:var(--talent);">4</div>
+      <div style="color:var(--text);font-size:12px;font-weight:500;margin-top:2px;">Talent hubs</div>
+      <div style="color:var(--text3);font-size:10px;margin-top:2px;">→ Talent</div>
+    </div>
+    <div class="card-sm" style="border-top:3px solid var(--chips);">
+      <div style="font-family:var(--display);font-size:22px;font-weight:800;color:var(--chips);">3</div>
+      <div style="color:var(--text);font-size:12px;font-weight:500;margin-top:2px;">Chip fabs</div>
+      <div style="color:var(--text3);font-size:10px;margin-top:2px;">→ Chips</div>
+    </div>
+    <div class="card-sm" style="border-top:3px solid var(--capital);">
+      <div style="font-family:var(--display);font-size:22px;font-weight:800;color:var(--capital);">3</div>
+      <div style="color:var(--text);font-size:12px;font-weight:500;margin-top:2px;">Capital markets</div>
+      <div style="color:var(--text3);font-size:10px;margin-top:2px;">→ Capital</div>
+    </div>
+  </div>
+  <div class="card-sm" style="margin-top:10px;border-left:3px solid var(--reg);border-radius:0 8px 8px 0;">
+    <div style="color:var(--reg);font-size:12px;font-weight:500;">1 Regulatory Zone</div>
+    <div style="color:var(--text3);font-size:11px;margin-top:2px;">No number token. Starts with the Disruption marker. Produces nothing.</div>
+  </div>
+</div>
+
+<!-- RESOURCES -->
+<div class="section" id="s-resources">
+  <div class="sec-head"><h2>Resources</h2><span class="tag">5 types</span></div>
+  <p style="color:var(--text2);margin-bottom:20px;font-size:12px;">Everything in the game flows through these five resources. You collect them from adjacent hexes when their number is rolled.</p>
+
+  <div class="grid5" style="margin-bottom:16px;">
+    <div class="resource-card" style="border-top:3px solid var(--compute);">
+      <div class="r-icon">⚡</div>
+      <div class="r-name" style="color:var(--compute);">Compute</div>
+      <div class="r-from">Compute clusters</div>
+      <div class="r-count">4 hexes · most common</div>
+    </div>
+    <div class="resource-card" style="border-top:3px solid var(--data);">
+      <div class="r-icon">◈</div>
+      <div class="r-name" style="color:var(--data);">Data</div>
+      <div class="r-from">Data lakes</div>
+      <div class="r-count">4 hexes · most common</div>
+    </div>
+    <div class="resource-card" style="border-top:3px solid var(--talent);">
+      <div class="r-icon">◎</div>
+      <div class="r-name" style="color:var(--talent);">Talent</div>
+      <div class="r-from">Talent hubs</div>
+      <div class="r-count">4 hexes · most common</div>
+    </div>
+    <div class="resource-card" style="border-top:3px solid var(--chips);">
+      <div class="r-icon">■</div>
+      <div class="r-name" style="color:var(--chips);">Chips</div>
+      <div class="r-from">Chip fabs</div>
+      <div class="r-count">3 hexes · scarce</div>
+    </div>
+    <div class="resource-card" style="border-top:3px solid var(--capital);">
+      <div class="r-icon">◆</div>
+      <div class="r-name" style="color:var(--capital);">Capital</div>
+      <div class="r-from">Capital markets</div>
+      <div class="r-count">3 hexes · scarce</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="sub-head" style="margin-top:0;">Production rules</div>
+    <div class="vp-row"><span class="vp-src">AI Hub adjacent to hex</span><span style="font-family:var(--display);font-weight:700;color:var(--text);">+1 card</span></div>
+    <div class="vp-row"><span class="vp-src">Mega Campus adjacent to hex</span><span style="font-family:var(--display);font-weight:700;color:var(--text);">+2 cards</span></div>
+    <div class="vp-row"><span class="vp-src">Disruption marker on hex</span><span style="font-family:var(--display);font-weight:700;color:var(--reg);">0 cards</span></div>
+    <div class="vp-row"><span class="vp-src">Bank trade rate (default)</span><span style="font-family:var(--display);font-weight:700;color:var(--text);">4:1</span></div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="sec-head"><h2>Strategic scarcity</h2><span class="tag">Design note</span></div>
+  <div class="grid2">
+    <div class="card">
+      <div class="build-name" style="color:var(--chips);">Chips are scarce by design</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:8px;line-height:1.7;">Only 3 Chip Fab hexes exist vs 4 of everything else. Chips are required for Network Links — the primary expansion tool. Early board fights will cluster around chip-adjacent intersections. This mirrors the real NVIDIA/TSMC bottleneck.</div>
+    </div>
+    <div class="card">
+      <div class="build-name" style="color:var(--capital);">Capital is the late-game fuel</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:8px;line-height:1.7;">Only 3 Capital Market hexes, but Capital appears in almost every high-tier cost (AI Hub, Mega Campus, Strategy Cards). Players who secure Capital early gain a compounding advantage in the mid-to-late game.</div>
+    </div>
+  </div>
+</div>
+
+<!-- BUILDING -->
+<div class="section" id="s-building">
+  <div class="sec-head"><h2>Building</h2><span class="tag">4 structure types</span></div>
+  <p style="color:var(--text2);margin-bottom:20px;font-size:12px;">Spend resources to build. Each structure has different placement rules and strategic value.</p>
+
+  <div class="grid2">
+    <div class="build-card">
+      <div class="build-name">Network Link</div>
+      <div class="build-aka">replaces roads</div>
+      <div class="build-costs">
+        <span class="res-pill" style="background:rgba(249,115,22,0.12);color:var(--compute);border:1px solid rgba(249,115,22,0.2);">
+          <span class="res-dot" style="background:var(--compute);"></span>1 Compute
+        </span>
+        <span class="res-pill" style="background:rgba(167,139,250,0.12);color:var(--chips);border:1px solid rgba(167,139,250,0.2);">
+          <span class="res-dot" style="background:var(--chips);"></span>1 Chips
+        </span>
+      </div>
+      <div class="build-effect">Must connect to your existing network. One link per edge. Primary expansion tool — controls the board and enables Longest Network VP.</div>
+    </div>
+
+    <div class="build-card">
+      <div class="build-name">AI Hub</div>
+      <div class="build-aka">replaces settlements</div>
+      <div class="build-costs">
+        <span class="res-pill" style="background:rgba(249,115,22,0.12);color:var(--compute);border:1px solid rgba(249,115,22,0.2);">
+          <span class="res-dot" style="background:var(--compute);"></span>1 Compute
+        </span>
+        <span class="res-pill" style="background:rgba(59,130,246,0.12);color:var(--data);border:1px solid rgba(59,130,246,0.2);">
+          <span class="res-dot" style="background:var(--data);"></span>1 Data
+        </span>
+        <span class="res-pill" style="background:rgba(52,211,153,0.12);color:var(--talent);border:1px solid rgba(52,211,153,0.2);">
+          <span class="res-dot" style="background:var(--talent);"></span>1 Talent
+        </span>
+        <span class="res-pill" style="background:rgba(251,191,36,0.12);color:var(--capital);border:1px solid rgba(251,191,36,0.2);">
+          <span class="res-dot" style="background:var(--capital);"></span>1 Capital
+        </span>
+      </div>
+      <div class="build-effect">Placed at open intersections connected to your network. Distance rule: no adjacent Hubs/Campuses on neighboring intersections. Worth 1 VP.</div>
+    </div>
+
+    <div class="build-card" style="border-color:rgba(74,222,128,0.2);">
+      <div class="build-name">Mega Campus</div>
+      <div class="build-aka">replaces cities</div>
+      <div class="build-costs">
+        <span class="res-pill" style="background:rgba(52,211,153,0.12);color:var(--talent);border:1px solid rgba(52,211,153,0.2);">
+          <span class="res-dot" style="background:var(--talent);"></span>2 Talent
+        </span>
+        <span class="res-pill" style="background:rgba(251,191,36,0.12);color:var(--capital);border:1px solid rgba(251,191,36,0.2);">
+          <span class="res-dot" style="background:var(--capital);"></span>3 Capital
+        </span>
+      </div>
+      <div class="build-effect">Upgrades an existing AI Hub — no new placement needed. Adjacent hexes now yield 2 resources instead of 1. Worth 2 VP. The primary scoring structure.</div>
+    </div>
+
+    <div class="build-card">
+      <div class="build-name">Strategy Card</div>
+      <div class="build-aka">replaces development cards</div>
+      <div class="build-costs">
+        <span class="res-pill" style="background:rgba(59,130,246,0.12);color:var(--data);border:1px solid rgba(59,130,246,0.2);">
+          <span class="res-dot" style="background:var(--data);"></span>1 Data
+        </span>
+        <span class="res-pill" style="background:rgba(52,211,153,0.12);color:var(--talent);border:1px solid rgba(52,211,153,0.2);">
+          <span class="res-dot" style="background:var(--talent);"></span>1 Talent
+        </span>
+        <span class="res-pill" style="background:rgba(251,191,36,0.12);color:var(--capital);border:1px solid rgba(251,191,36,0.2);">
+          <span class="res-dot" style="background:var(--capital);"></span>1 Capital
+        </span>
+      </div>
+      <div class="build-effect">Draw from the shuffled Strategy Card deck. May be played immediately or held. Cannot play a card on the same turn it was bought.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="sec-head"><h2>Building rules</h2><span class="tag">Key constraints</span></div>
+  <div class="card">
+    <table class="qr-table">
+      <tr><td>Network Links</td><td>Must connect to your existing network. One per board edge.</td></tr>
+      <tr><td>AI Hubs</td><td>Open intersection only. Must connect to one of your links. Distance rule applies.</td></tr>
+      <tr><td>Mega Campuses</td><td>Upgrade existing Hub only. No new location needed.</td></tr>
+      <tr><td>Distance rule</td><td>No Hub or Campus may be placed adjacent to another on neighboring intersections.</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- TURNS -->
+<div class="section" id="s-turns">
+  <div class="sec-head"><h2>Turn structure</h2><span class="tag">Each turn</span></div>
+
+  <div class="card" style="margin-bottom:16px;">
+    <div class="turn-step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <strong>Roll 2 dice</strong>
+        <p>Every hex with that number produces. Players with adjacent AI Hubs collect 1 resource. Mega Campus adjacency yields 2. If you roll a 7, resolve Disruption instead.</p>
+      </div>
+    </div>
+    <div class="turn-step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <strong>Trade</strong>
+        <p>Trade with other players at any mutually agreed rate. Or trade with the bank at 4:1. Trading and building can happen in any order during steps 2–3.</p>
+      </div>
+    </div>
+    <div class="turn-step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <strong>Build, buy, or play cards</strong>
+        <p>Spend resources to build Network Links, AI Hubs, Mega Campuses, or buy Strategy Cards. Play any cards from hand (except ones bought this turn). Do as many as you can afford.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="disrupt-box">
+    <div class="disrupt-title">
+      <span style="width:8px;height:8px;background:#ef4444;border-radius:50%;display:inline-block;"></span>
+      Rolling a 7 — Disruption
+    </div>
+    <div class="disrupt-step"><span class="disrupt-step-num">1.</span><span>Any player holding more than 7 resource cards must discard half, rounded down.</span></div>
+    <div class="disrupt-step"><span class="disrupt-step-num">2.</span><span>The active player moves the Disruption marker to any hex. That hex stops producing until the marker moves again.</span></div>
+    <div class="disrupt-step"><span class="disrupt-step-num">3.</span><span>If one or more opponents have a Hub or Campus adjacent to the new hex, steal 1 random resource card from one of them.</span></div>
+    <div class="flavor-chips">
+      <span class="flavor-chip">chip shortage</span>
+      <span class="flavor-chip">regulatory freeze</span>
+      <span class="flavor-chip">outage</span>
+      <span class="flavor-chip">layoff wave</span>
+      <span class="flavor-chip">prompt injection</span>
+      <span class="flavor-chip">product failure</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="sec-head"><h2>Setup order</h2><span class="tag">Before first turn</span></div>
+  <div class="card">
+    <div class="turn-step">
+      <div class="step-num">A</div>
+      <div class="step-body"><strong>Arrange the board</strong><p>Shuffle hexes and lay out in 3-4-5-4-3 pattern. Place Regulatory Zone (can be random or center). Place number tokens on all producing hexes.</p></div>
+    </div>
+    <div class="turn-step">
+      <div class="step-num">B</div>
+      <div class="step-body"><strong>First placement (clockwise)</strong><p>Each player places 1 AI Hub + 1 connected Network Link.</p></div>
+    </div>
+    <div class="turn-step">
+      <div class="step-num">C</div>
+      <div class="step-body"><strong>Second placement (counter-clockwise)</strong><p>Each player places 1 more AI Hub + 1 connected Network Link.</p></div>
+    </div>
+    <div class="turn-step">
+      <div class="step-num">D</div>
+      <div class="step-body"><strong>Starting resources</strong><p>Each player collects resources from all hexes touching their second AI Hub.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- CARDS -->
+<div class="section" id="s-cards">
+  <div class="sec-head"><h2>Strategy cards</h2><span class="tag">25 cards · 6 types</span></div>
+  <p style="color:var(--text2);margin-bottom:20px;font-size:12px;">Buy for 1 Data + 1 Talent + 1 Capital. Cannot play on the same turn purchased. Held secretly until played.</p>
+
+  <div class="grid3">
+    <div class="strat-card">
+      <div class="strat-type">Aggression</div>
+      <div class="strat-name">Breakthrough</div>
+      <div class="strat-effect">Move the Disruption marker to any hex and steal 1 random resource card from an adjacent opponent.</div>
+      <div class="strat-count">×5 in deck</div>
+    </div>
+    <div class="strat-card">
+      <div class="strat-type">Income</div>
+      <div class="strat-name">Talent Surge</div>
+      <div class="strat-effect">Immediately gain 2 Talent resource cards from the bank.</div>
+      <div class="strat-count">×5 in deck</div>
+    </div>
+    <div class="strat-card">
+      <div class="strat-type">Income</div>
+      <div class="strat-name">Capital Injection</div>
+      <div class="strat-effect">Immediately gain 2 Capital resource cards from the bank.</div>
+      <div class="strat-count">×4 in deck</div>
+    </div>
+    <div class="strat-card" style="border-color:rgba(74,222,128,0.2);">
+      <div class="strat-type">Prestige</div>
+      <div class="strat-name">Patent Advantage</div>
+      <div class="strat-effect">Counts toward Research Leadership. First player to play 3 of these gains the Research Leadership card (2 VP). Can be taken by any player who plays more.</div>
+      <div class="strat-count">×5 in deck</div>
+    </div>
+    <div class="strat-card">
+      <div class="strat-type">Expansion</div>
+      <div class="strat-name">Market Expansion</div>
+      <div class="strat-effect">Build 2 Network Links for free. Links must still follow all normal placement rules.</div>
+      <div class="strat-count">×3 in deck</div>
+    </div>
+    <div class="strat-card" style="border-color:rgba(251,191,36,0.2);">
+      <div class="strat-type">Hidden VP</div>
+      <div class="strat-name">Hidden Influence</div>
+      <div class="strat-effect">Worth 1 Victory Point. Keep this card secret until the game ends or you win. Do not reveal until forced.</div>
+      <div class="strat-count">×3 in deck</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="sec-head"><h2>Special awards</h2><span class="tag">Claimable by any player</span></div>
+  <div class="grid2">
+    <div class="build-card" style="border-color:rgba(74,222,128,0.15);">
+      <div class="build-name">Longest Network</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:8px;line-height:1.7;">First player to build a connected chain of at least 5 Network Links claims this card for <strong style="color:var(--accent);">2 VP</strong>. If another player builds a longer chain, they take it. The card moves; the VPs move with it.</div>
+    </div>
+    <div class="build-card" style="border-color:rgba(74,222,128,0.15);">
+      <div class="build-name">Research Leadership</div>
+      <div style="font-size:12px;color:var(--text2);margin-top:8px;line-height:1.7;">Gained by the first player to play 3 Patent Advantage cards, worth <strong style="color:var(--accent);">2 VP</strong>. Can be taken by a player who has played more. Watching the Patent count is essential mid-game.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ARCHETYPES -->
+<div class="section" id="s-archetypes">
+  <div class="sec-head"><h2>Player archetypes</h2><span class="tag">Optional · 4 factions</span></div>
+  <p style="color:var(--text2);margin-bottom:20px;font-size:12px;">Assign one to each player before setup. These passive bonuses push different strategic styles without breaking the base game balance. Recommended for your second and third playtest, not the first.</p>
+
+  <div class="grid2">
+    <div class="arch-card">
+      <div class="arch-name">Frontier Lab</div>
+      <div class="arch-sub">Foundation model · Research-first</div>
+      <div class="arch-bonus"><strong>Passive:</strong> The first Strategy Card you buy each game costs 1 less Capital.<br><br>Pushes the Research Leadership path. Combined with Patent Advantage cards, can lock down the 2 VP award early and force rivals to play catch-up.</div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-name">Cloud Giant</div>
+      <div class="arch-sub">Infrastructure · Network-first</div>
+      <div class="arch-bonus"><strong>Passive:</strong> The first Network Link you build each turn costs 1 less Chips.<br><br>Chips are the scarcest resource, so this compounds significantly over a long game. Natural path to Longest Network VP. Very strong if Chip Fabs cluster on one side of the board.</div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-name">Consumer Platform</div>
+      <div class="arch-sub">Applied AI · Trade-first</div>
+      <div class="arch-bonus"><strong>Passive:</strong> Once per turn, when you trade resources with another player, gain 1 extra Capital.<br><br>Incentivizes active trading diplomacy. Becomes stronger when the board gets congested and players need to trade to unblock. Pairs with a flexible, spread-out expansion style.</div>
+    </div>
+    <div class="arch-card">
+      <div class="arch-name">Enterprise Titan</div>
+      <div class="arch-sub">Capital-heavy · Upgrade-first</div>
+      <div class="arch-bonus"><strong>Passive:</strong> When upgrading an AI Hub to a Mega Campus, pay 2 Capital + 2 Talent instead of the full 3 Capital + 2 Talent.<br><br>Accelerates the upgrade path and compounds fast. Best paired with strong Capital Market positions in setup. Rush 3–4 Mega Campuses before others can contest them.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SCORING -->
+<div class="section" id="s-scoring">
+  <div class="sec-head"><h2>Victory points</h2><span class="tag">First to 10 VP wins</span></div>
+
+  <div class="card" style="margin-bottom:16px;">
+    <div class="vp-row"><span class="vp-src">Each AI Hub</span><span class="vp-pts">1 VP</span></div>
+    <div class="vp-row"><span class="vp-src">Each Mega Campus</span><span class="vp-pts">2 VP</span></div>
+    <div class="vp-row"><span class="vp-src">Longest Network card (5+ links)</span><span class="vp-pts">2 VP</span></div>
+    <div class="vp-row"><span class="vp-src">Research Leadership card (3 Patents)</span><span class="vp-pts">2 VP</span></div>
+    <div class="vp-row"><span class="vp-src">Each Hidden Influence card</span><span class="vp-pts">1 VP</span></div>
+  </div>
+
+  <div class="win-banner">
+    <div class="win-num">10</div>
+    <div class="win-label">Victory Points on your turn = you win the AI Race</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="sec-head"><h2>Sample win paths</h2><span class="tag">Routes to 10 VP</span></div>
+  <div class="grid2">
+    <div class="card">
+      <div class="build-name" style="font-size:13px;margin-bottom:8px;">Expansion route</div>
+      <table class="qr-table">
+        <tr><td>5 AI Hubs</td><td>5 VP</td></tr>
+        <tr><td>Longest Network</td><td>2 VP</td></tr>
+        <tr><td>Research Leadership</td><td>2 VP</td></tr>
+        <tr><td>1 Hidden Influence</td><td>1 VP</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="build-name" style="font-size:13px;margin-bottom:8px;">Upgrade route</div>
+      <table class="qr-table">
+        <tr><td>2 AI Hubs</td><td>2 VP</td></tr>
+        <tr><td>3 Mega Campuses</td><td>6 VP</td></tr>
+        <tr><td>Research Leadership</td><td>2 VP</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="build-name" style="font-size:13px;margin-bottom:8px;">Balanced route</div>
+      <table class="qr-table">
+        <tr><td>3 AI Hubs</td><td>3 VP</td></tr>
+        <tr><td>2 Mega Campuses</td><td>4 VP</td></tr>
+        <tr><td>Longest Network</td><td>2 VP</td></tr>
+        <tr><td>1 Hidden Influence</td><td>1 VP</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <div class="build-name" style="font-size:13px;margin-bottom:8px;">Influence route</div>
+      <table class="qr-table">
+        <tr><td>4 AI Hubs</td><td>4 VP</td></tr>
+        <tr><td>1 Mega Campus</td><td>2 VP</td></tr>
+        <tr><td>Research Leadership</td><td>2 VP</td></tr>
+        <tr><td>2 Hidden Influence</td><td>2 VP</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- DICE -->
+<div class="section" id="s-dice">
+  <div class="sec-head"><h2>Dice roller</h2><span class="tag">For playtesting</span></div>
+  <p style="color:var(--text2);margin-bottom:20px;font-size:12px;">Use this during your paper prototype sessions when you don't have physical dice handy.</p>
+
+  <div class="dice-section">
+    <div class="dice-display">
+      <div class="die" id="die1">–</div>
+      <div class="die" id="die2">–</div>
+    </div>
+    <div class="dice-total" id="diceTotal" style="color:var(--text2);">Roll to begin</div>
+    <div class="dice-result" id="diceResult"></div>
+    <br>
+    <button class="roll-btn" onclick="rollDice()">Roll dice</button>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="sec-head"><h2>Probability table</h2><span class="tag">2d6 outcomes</span></div>
+  <div class="card">
+    <div class="prob-row"><span class="prob-num">2</span><span class="prob-dots">·</span><span class="prob-bar-wrap"><div class="prob-bar" style="width:2.8%"></div></span><span class="prob-pct">2.8%</span></div>
+    <div class="prob-row"><span class="prob-num">3</span><span class="prob-dots">··</span><span class="prob-bar-wrap"><div class="prob-bar" style="width:5.6%"></div></span><span class="prob-pct">5.6%</span></div>
+    <div class="prob-row"><span class="prob-num">4</span><span class="prob-dots">···</span><span class="prob-bar-wrap"><div class="prob-bar" style="width:8.3%"></div></span><span class="prob-pct">8.3%</span></div>
+    <div class="prob-row"><span class="prob-num">5</span><span class="prob-dots">····</span><span class="prob-bar-wrap"><div class="prob-bar" style="width:11.1%"></div></span><span class="prob-pct">11.1%</span></div>
+    <div class="prob-row"><span class="prob-num">6</span><span class="prob-dots">·····</span><span class="prob-bar-wrap"><div class="prob-bar" style="width:13.9%"></div></span><span class="prob-pct">13.9%</span></div>
+    <div class="prob-row" style="background:rgba(239,68,68,0.05);border-radius:4px;padding:6px 4px;margin:2px 0;">
+      <span class="prob-num" style="color:var(--reg);">7</span>
+      <span class="prob-dots" style="color:var(--reg);">······</span>
+      <span class="prob-bar-wrap"><div class="prob-bar" style="width:16.7%;background:var(--reg);"></div></span>
+      <span class="prob-pct" style="color:var(--reg);">16.7%</span>
+    </div>
+    <div class="prob-row"><span class="prob-num">8</span><span class="prob-dots">·····</span><span class="prob-bar-wrap"><div class="prob-bar" style="width:13.9%"></div></span><span class="prob-pct">13.9%</span></div>
+    <div class="prob-row"><span class="prob-num">9</span><span class="prob-dots">····</span><span class="prob-bar-wrap"><div class="prob-bar" style="width:11.1%"></div></span><span class="prob-pct">11.1%</span></div>
+    <div class="prob-row"><span class="prob-num">10</span><span class="prob-dots">···</span><span class="prob-bar-wrap"><div class="prob-bar" style="width:8.3%"></div></span><span class="prob-pct">8.3%</span></div>
+    <div class="prob-row"><span class="prob-num">11</span><span class="prob-dots">··</span><span class="prob-bar-wrap"><div class="prob-bar" style="width:5.6%"></div></span><span class="prob-pct">5.6%</span></div>
+    <div class="prob-row"><span class="prob-num">12</span><span class="prob-dots">·</span><span class="prob-bar-wrap"><div class="prob-bar" style="width:2.8%"></div></span><span class="prob-pct">2.8%</span></div>
+    <div style="font-size:11px;color:var(--text3);margin-top:12px;">7 is the most likely outcome (1 in 6 rolls). A disruption occurs roughly every 6 turns on average.</div>
+  </div>
+</div>
+
+</main>
+
+<script src="assets/scripts/rules.js"></script>
+</body>
+</html>

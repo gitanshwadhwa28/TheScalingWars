@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Race: Pass and Play Prototype</title>
+<link rel="stylesheet" href="assets/styles/run.css">
+</head>
+<body>
+<div class="shell">
+  <div class="topbar">
+    <div class="title-wrap">
+      <h1>The Scaling Wars</h1>
+      <p>Local pass-and-play strategy game. Build network links, plant AI hubs, upgrade to mega campuses, trigger disruptions, and race to 10 victory points.</p>
+    </div>
+    <div class="status-chip" id="phaseChip">Setup</div>
+  </div>
+
+  <div class="layout">
+    <div class="stack">
+      <div class="panel">
+        <div class="panel-inner">
+          <div class="section-label">Game Setup</div>
+          <div class="small" style="margin-bottom:12px;">Start a fresh pass-and-play game with 3 or 4 players. The board randomizes each time.</div>
+          <div style="margin-bottom:12px;">
+            <label class="section-label" for="playerCount">Players</label>
+            <select id="playerCount"></select>
+          </div>
+          <div class="setup-grid" id="setupPlayers"></div>
+          <div class="button-row" style="margin-top:14px;">
+            <button id="newGameBtn">Start New Game</button>
+            <button class="secondary" id="resetNamesBtn">Reset Names</button>
+          </div>
+          <div class="footer-note">Setup includes snake-order placement for two starter AI hubs and two starter network links per player.</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-inner">
+          <div class="section-label">Current Turn</div>
+          <div class="turn-banner">
+            <div class="name" id="currentPlayerName">No game running</div>
+            <div class="sub" id="currentTurnSummary">Create a game to begin.</div>
+          </div>
+          <div class="summary-grid" style="margin-top:12px;">
+            <div class="metric">
+              <div class="section-label">Dice</div>
+              <div class="metric-value" id="diceValue">-</div>
+            </div>
+            <div class="metric">
+              <div class="section-label">Mode</div>
+              <div class="metric-value" style="font-size:1.1rem;" id="modeValue">Waiting</div>
+            </div>
+          </div>
+          <div class="button-row" style="margin-top:12px;">
+            <button id="rollBtn">Roll Dice</button>
+            <button class="secondary" id="endTurnBtn">End Turn</button>
+          </div>
+          <div class="instruction" id="instructionBox">Start a new game, then place the opening AI hubs and network links when prompted.</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-inner">
+          <div class="section-label">Players</div>
+          <div class="players-list" id="playersList"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="board-column">
+      <div class="panel board-wrap">
+        <svg id="board" viewBox="0 0 980 860" xmlns="http://www.w3.org/2000/svg" aria-label="AI Race Board"></svg>
+        <div class="legend" id="legend"></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-inner">
+          <div class="section-label">Player Trade</div>
+          <div class="trade-grid-players">
+            <div>
+              <label class="section-label" for="playerTradeTarget">Trade With</label>
+              <select id="playerTradeTarget"></select>
+            </div>
+            <div>
+              <label class="section-label" for="playerTradeGiveResource">You Give</label>
+              <select id="playerTradeGiveResource"></select>
+            </div>
+            <div>
+              <label class="section-label" for="playerTradeGiveAmount">Amt</label>
+              <input id="playerTradeGiveAmount" type="number" min="1" value="1">
+            </div>
+            <div>
+              <label class="section-label" for="playerTradeGetResource">You Get</label>
+              <select id="playerTradeGetResource"></select>
+            </div>
+            <div>
+              <label class="section-label" for="playerTradeGetAmount">Amt</label>
+              <input id="playerTradeGetAmount" type="number" min="1" value="1">
+            </div>
+            <button id="playerTradeBtn">Offer</button>
+          </div>
+          <div class="footer-note">Only the current player can trade. This pass-and-play prototype treats submitting the form as both players agreeing to the exchange.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stack">
+      <div class="panel">
+        <div class="panel-inner">
+          <div class="section-label">Active Player Resources</div>
+          <div class="resources-grid" id="resourceCards"></div>
+          <div class="footer-note">Only the current player's detailed hand is shown to support pass-and-play privacy.</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-inner">
+          <div class="section-label">Actions</div>
+          <div class="button-row" style="margin-bottom:12px;">
+            <button class="secondary" id="buildLinkBtn">Build Link</button>
+            <button class="secondary" id="buildHubBtn">Build Hub</button>
+            <button class="secondary" id="buildCampusBtn">Upgrade Campus</button>
+            <button class="secondary" id="cancelModeBtn">Cancel Mode</button>
+          </div>
+          <div class="build-grid">
+            <div class="build-card">
+              <strong>Network Link</strong>
+              <div class="cost">Cost: 1 Compute + 1 Chips</div>
+            </div>
+            <div class="build-card">
+              <strong>AI Hub</strong>
+              <div class="cost">Cost: 1 Compute + 1 Data + 1 Talent + 1 Capital</div>
+            </div>
+            <div class="build-card">
+              <strong>Mega Campus</strong>
+              <div class="cost">Cost: 2 Talent + 3 Capital</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-inner">
+          <div class="section-label">Bank Trade</div>
+          <div class="trade-grid">
+            <div>
+              <label class="section-label" for="tradeFrom">Give 4</label>
+              <select id="tradeFrom"></select>
+            </div>
+            <div>
+              <label class="section-label" for="tradeTo">Get 1</label>
+              <select id="tradeTo"></select>
+            </div>
+            <button id="tradeBtn">Trade</button>
+          </div>
+          <div class="footer-note">Prototype uses the baseline 4:1 bank trade. Ports and strategy cards are not in this version yet.</div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-inner">
+          <div class="section-label">Game Log</div>
+          <div class="log" id="gameLog"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="handoffOverlay">
+  <div class="overlay-card">
+    <h2 id="overlayTitle">Pass the device</h2>
+    <p id="overlayBody">The next player can continue when ready.</p>
+    <div class="tag-row" id="overlayTags"></div>
+    <div class="button-row" style="margin-top:18px;">
+      <button id="overlayContinueBtn">Continue</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="discardOverlay">
+  <div class="overlay-card">
+    <h2 id="discardTitle">Discard resources</h2>
+    <p id="discardBody">This player has too many cards after a disruption roll.</p>
+    <div class="discard-grid" id="discardGrid"></div>
+    <div class="button-row">
+      <button id="discardConfirmBtn" class="warn">Confirm Discard</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="eventOverlay">
+  <div class="overlay-card">
+    <div class="event-eyebrow">Disruption Event</div>
+    <h2 id="eventTitle">Event Title</h2>
+    <p id="eventBody">Event details.</p>
+    <div class="event-impact" id="eventImpact">Mechanical effect.</div>
+    <div class="tag-row" id="eventTags"></div>
+    <div class="button-row" style="margin-top:18px;">
+      <button id="eventContinueBtn">Resolve Disruption</button>
+    </div>
+  </div>
+</div>
+
+<script src="assets/scripts/run.js"></script>
+</body>
+</html>
