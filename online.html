@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Scaling Wars: Online Multiplayer</title>
+<link rel="stylesheet" href="assets/styles/online.css">
+</head>
+<body>
+<div class="shell">
+  <header class="hero">
+    <div>
+      <div class="eyebrow">Online Multiplayer Alpha</div>
+      <h1>The Scaling Wars</h1>
+      <p>Create a room, share the code, join with friends, and use the built-in room chat while the server owns room state.</p>
+    </div>
+    <div class="status" id="connectionStatus">Connecting...</div>
+  </header>
+
+  <main class="layout">
+    <section class="panel stack" id="lobbyPanel">
+      <div class="panel-section">
+        <div class="section-label">Create Room</div>
+        <label class="field">
+          <span>Your Name</span>
+          <input id="createName" type="text" maxlength="18" placeholder="OpenAI">
+        </label>
+        <button id="createRoomBtn">Create Room</button>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-label">Join Room</div>
+        <label class="field">
+          <span>Your Name</span>
+          <input id="joinName" type="text" maxlength="18" placeholder="Google">
+        </label>
+        <label class="field">
+          <span>Room Code</span>
+          <input id="joinCode" type="text" maxlength="6" placeholder="ABCD12">
+        </label>
+        <button id="joinRoomBtn" class="secondary">Join Room</button>
+      </div>
+
+      <div class="panel-section" id="implementsPanel">
+        <div class="section-label">What This Implements</div>
+        <ul class="bullets">
+          <li>room code creation and joining</li>
+          <li>host + ready state</li>
+          <li>server-authoritative room state</li>
+          <li>multiplayer room chat</li>
+          <li>shared game-state initialization on start</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="panel stack" id="gamePanel">
+      <div class="panel-section">
+        <div class="room-head">
+          <div>
+            <div class="section-label">Room</div>
+            <div class="room-code" id="roomCode">No room joined</div>
+          </div>
+          <div class="button-row">
+            <button id="readyBtn" class="secondary" disabled>Toggle Ready</button>
+            <button id="startGameBtn" disabled>Start Game</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-label">Players</div>
+        <div id="playersList" class="players"></div>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-label">Game State</div>
+        <div id="gameStateCard" class="game-state-card">
+          <div class="title">Lobby waiting</div>
+          <div class="body">Create or join a room to begin. When the host starts the game, the server initializes the shared board and turn state.</div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-label">Turn Actions</div>
+        <div class="button-row">
+          <button id="rollDiceBtn" class="secondary" disabled>Roll Dice</button>
+          <button id="buildLinkBtn" class="secondary" disabled>Build Link</button>
+          <button id="buildHubBtn" class="secondary" disabled>Build Hub</button>
+          <button id="buildCampusBtn" class="secondary" disabled>Build Campus</button>
+          <button id="cancelActionBtn" class="secondary" disabled>Cancel</button>
+          <button id="ackEventBtn" class="secondary" disabled>Resolve Event</button>
+          <button id="discardBtn" class="secondary" disabled>Discard</button>
+          <button id="endTurnBtn" class="secondary" disabled>End Turn</button>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-label">Your Resources</div>
+        <div id="resourceSummary" class="resource-summary"></div>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-label">Trade Desk</div>
+        <div class="trade-cluster">
+          <div class="trade-block">
+            <div class="trade-title">Bank Trade</div>
+            <div class="trade-grid">
+              <select id="bankTradeFrom"></select>
+              <select id="bankTradeTo"></select>
+              <button id="bankTradeBtn" class="secondary" disabled>Trade</button>
+            </div>
+          </div>
+          <div class="trade-block">
+            <div class="trade-title">Player Trade</div>
+            <div class="trade-grid-players">
+              <select id="playerTradeTarget"></select>
+              <select id="playerTradeGiveResource"></select>
+              <input id="playerTradeGiveAmount" type="number" min="1" value="1">
+              <select id="playerTradeGetResource"></select>
+              <input id="playerTradeGetAmount" type="number" min="1" value="1">
+              <button id="playerTradeBtn" class="secondary" disabled>Offer</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-label">Board</div>
+        <svg id="onlineBoard" viewBox="0 0 980 860" aria-label="Online game board"></svg>
+      </div>
+    </section>
+
+    <section class="panel stack" id="chatPanel">
+      <div class="panel-section">
+        <div class="section-label">Room Voice</div>
+        <div class="voice-status-row">
+          <div id="voiceStatus" class="voice-status">Voice offline</div>
+          <div class="button-row">
+            <button id="joinVoiceBtn" class="secondary" disabled>Join Voice</button>
+            <button id="leaveVoiceBtn" class="secondary" disabled>Leave Voice</button>
+            <button id="muteVoiceBtn" class="secondary" disabled>Mute</button>
+          </div>
+        </div>
+        <div id="voiceParticipants" class="voice-participants"></div>
+      </div>
+
+      <div class="panel-section">
+        <div class="section-label">Room Chat</div>
+        <div id="chatLog" class="chat-log"></div>
+      </div>
+
+      <div class="panel-section">
+        <label class="field">
+          <span>Message</span>
+          <textarea id="chatInput" rows="4" placeholder="Talk strategy, bluff trades, or negotiate alliances..."></textarea>
+        </label>
+        <button id="sendChatBtn">Send Message</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="overlay" id="tradeOverlay">
+  <div class="overlay-card">
+    <div class="section-label">Incoming Trade Offer</div>
+    <div id="tradeOfferBody" class="trade-offer-body">Trade details will appear here.</div>
+    <div class="button-row">
+      <button id="acceptTradeBtn">Accept</button>
+      <button id="declineTradeBtn" class="secondary">Decline</button>
+    </div>
+  </div>
+</div>
+
+<div id="voiceAudioDock" hidden></div>
+<script src="/socket.io/socket.io.js"></script>
+<script src="assets/scripts/voice.js"></script>
+<script src="assets/scripts/online.js"></script>
+</body>
+</html>

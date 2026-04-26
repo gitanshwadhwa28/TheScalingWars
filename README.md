@@ -6,6 +6,7 @@ Players act as rival tech giants competing for dominance across compute, data, c
 
 - a `rules.html` rules and marketing page
 - a `run.html` local pass-and-play prototype
+- an `online.html` multiplayer room and chat client
 - a hex-based board
 - resource generation, building, upgrading, trading, disruption events, and victory point tracking
 
@@ -49,17 +50,18 @@ The current web prototype is a local pass-and-play experience designed for rapid
 - longest network scoring
 - victory point tracking
 - rules/reference page
+- multiplayer room code server scaffold
+- Socket.IO room presence and chat
+- server-authoritative room and initial game-state creation
 
 ### Not Yet Implemented
 
-- online multiplayer
-- WebSockets or real-time sync
 - accounts / matchmaking / rooms
-- chat between players
 - voice conversation
 - strategy card deck with deeper card effects
 - AI opponents
 - persistent saves
+- full online board-action port from the pass-and-play client
 
 ## Project Structure
 
@@ -67,26 +69,39 @@ The current web prototype is a local pass-and-play experience designed for rapid
 .
 ├── assets
 │   ├── scripts
+│   │   ├── online.js
 │   │   ├── rules.js
 │   │   └── run.js
 │   └── styles
+│       ├── online.css
 │       ├── rules.css
 │       └── run.css
 ├── docs
 │   └── ARCHITECTURE.md
+├── online.html
+├── package.json
 ├── rules.html
 ├── run.html
+├── server
+│   ├── index.js
+│   └── room-store.js
+├── shared
+│   └── game-core.js
 └── README.md
 ```
 
 ## How To Run
 
-This project is currently static HTML/CSS/JS, so you can open it directly in a browser.
+This project now has two modes:
+
+- local static pages for the rules and pass-and-play prototype
+- a Node + Socket.IO server for the online multiplayer alpha
 
 Recommended entry points:
 
 - `rules.html` for the rules / overview page
 - `run.html` for the playable prototype
+- `online.html` for the multiplayer lobby + room chat client
 
 If you want to serve it locally through a simple static server:
 
@@ -106,6 +121,37 @@ or
 http://localhost:8000/run.html
 ```
 
+### Online Multiplayer Alpha
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the server:
+
+```bash
+npm start
+```
+
+Then open:
+
+```text
+http://localhost:3000/online.html
+```
+
+Current online alpha includes:
+
+- create room
+- join room by code
+- host / ready state
+- room chat
+- server-owned room state
+- server initialization of shared game state when the host starts the game
+
+The next step is wiring the full board interactions from `run.html` into socket-driven multiplayer actions.
+
 ## Design Direction
 
 The long-term goal is to evolve this from a pass-and-play prototype into an online multiplayer strategy game with:
@@ -120,11 +166,12 @@ The long-term goal is to evolve this from a pass-and-play prototype into an onli
 
 ## Suggested Next Steps
 
-1. Extract the game rules from `run.js` into a standalone engine module.
-2. Add room-based multiplayer with a server-authoritative state model.
-3. Introduce player chat first, then voice on top of room presence.
-4. Expand disruption events into mechanically distinct cards.
-5. Add strategy cards, partnerships, and midgame alliance systems.
+1. Port the existing board actions from `run.js` into server-validated socket events.
+2. Move more of the gameplay rules from the UI layer into `shared/game-core.js`.
+3. Add reconnect handling and persistent room recovery.
+4. Introduce player chat first, then voice on top of room presence.
+5. Expand disruption events into mechanically distinct cards.
+6. Add strategy cards, partnerships, and midgame alliance systems.
 
 ## Status
 
